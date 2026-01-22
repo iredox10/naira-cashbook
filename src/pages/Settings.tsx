@@ -1,4 +1,4 @@
-import { User, Shield, HelpCircle, Database, Download, Upload, Trash, LogOut, Cloud, RefreshCw, Briefcase, Plus } from 'lucide-react';
+import { User, Shield, HelpCircle, Database, Download, Upload, Trash, LogOut, Cloud, RefreshCw, Briefcase, Plus, UserPlus } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { db } from '../db/db';
 import { useBusiness } from '../context/BusinessContext';
@@ -148,16 +148,22 @@ export function Settings() {
 
                 <div className="space-y-2">
                     {businesses?.map(b => (
-                        <button
-                            key={b.id}
-                            onClick={() => switchBusiness(b.id!)}
-                            className={cn(
-                                "w-full flex items-center justify-between p-3 rounded-xl transition-all border",
-                                currentBusiness?.id === b.id ? "bg-emerald-600 text-white border-emerald-600 shadow-md transform scale-[1.02]" : "bg-white text-slate-600 border-slate-100 hover:bg-slate-50"
-                            )}>
-                            <span className="font-bold">{b.name}</span>
-                            {currentBusiness?.id === b.id && <span className="bg-white/20 text-xs px-2 py-1 rounded-full text-white">Active</span>}
-                        </button>
+                        <div key={b.id} className="relative group">
+                            <button
+                                onClick={() => switchBusiness(b.id!)}
+                                className={cn(
+                                    "w-full flex items-center justify-between p-3 rounded-xl transition-all border text-left",
+                                    currentBusiness?.id === b.id ? "bg-emerald-600 text-white border-emerald-600 shadow-md transform scale-[1.02]" : "bg-white text-slate-600 border-slate-100 hover:bg-slate-50"
+                                )}>
+                                <span className="font-bold">{b.name}</span>
+                                {currentBusiness?.id === b.id && <span className="bg-white/20 text-xs px-2 py-1 rounded-full text-white">Active</span>}
+                            </button>
+                            {currentBusiness?.id === b.id && (
+                                <a href="/add-member" className="absolute right-14 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors" title="Add Members">
+                                    <UserPlus size={16} />
+                                </a>
+                            )}
+                        </div>
                     ))}
                 </div>
             </div>

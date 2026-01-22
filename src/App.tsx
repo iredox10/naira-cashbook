@@ -11,6 +11,7 @@ import { Parties } from './pages/Parties';
 import { Staff } from './pages/Staff';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { AddMember } from './pages/AddMember';
 import { PrivacyProvider } from './context/PrivacyContext';
 import { BusinessProvider } from './context/BusinessContext';
 import { AuthProvider } from './context/AuthContext';
@@ -40,6 +41,7 @@ function App() {
                     <Route path="settings" element={<Settings />} />
                   </Route>
                   <Route path="/add" element={<AddTransaction />} />
+                  <Route path="/add-member" element={<AddMember />} />
                 </Route>
               </Routes>
             </BrowserRouter>
