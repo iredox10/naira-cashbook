@@ -42,6 +42,8 @@ export interface Item {
   price: number;
   costPrice?: number;
   remoteId?: string;
+  minStock?: number;
+  unit?: string;
 }
 
 export interface Party {

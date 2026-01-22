@@ -7,27 +7,27 @@ import { useBusiness } from '../context/BusinessContext';
 
 export function CashflowPredictor() {
   const { currentBusiness } = useBusiness();
-  
+
   const prediction = useLiveQuery(async () => {
     if (!currentBusiness) return { totalDue: 0, count: 0 };
-    
+
     const today = new Date();
     const nextWeek = addDays(today, 7);
-    
+
     // Find all 'Credit' transactions that are due in the next 7 days
     const upcomingDues = await db.transactions
       .where('businessId')
-      .equals(currentBusiness.id)
-      .filter(t => 
-        t.isCredit === true && 
-        !!t.dueDate && 
-        isAfter(new Date(t.dueDate), today) && 
+      .equals(currentBusiness.id ?? 0)
+      .filter(t =>
+        t.isCredit === true &&
+        !!t.dueDate &&
+        isAfter(new Date(t.dueDate), today) &&
         isBefore(new Date(t.dueDate), nextWeek)
       )
       .toArray();
 
     const totalDue = upcomingDues.reduce((sum, t) => sum + t.amount, 0);
-    
+
     return { totalDue, count: upcomingDues.length };
   }, [currentBusiness?.id]);
 
@@ -37,7 +37,7 @@ export function CashflowPredictor() {
     <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start space-x-4">
         <div className="p-3 bg-amber-100 rounded-xl text-amber-600 shrink-0">
-           <AlertTriangle size={24} />
+          <AlertTriangle size={24} />
         </div>
         <div>
           <h4 className="font-bold text-amber-900 text-lg">Upcoming Payments</h4>

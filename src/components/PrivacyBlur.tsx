@@ -1,6 +1,6 @@
 import { usePrivacy } from '../context/PrivacyContext';
 import { cn } from '../lib/utils';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export function PrivacyBlur({ children, className }: { children: ReactNode; className?: string }) {
   const { isPrivacyMode } = usePrivacy();
