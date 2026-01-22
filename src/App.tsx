@@ -5,6 +5,8 @@ import { History } from './pages/History';
 import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
 import { AddTransaction } from './pages/AddTransaction';
+import { Inventory } from './pages/Inventory';
+import { Parties } from './pages/Parties';
 import { PrivacyProvider } from './context/PrivacyContext';
 import { BusinessProvider } from './context/BusinessContext';
 
@@ -16,6 +18,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="parties" element={<Parties />} />
               <Route path="history" element={<History />} />
               <Route path="reports" element={<Reports />} />
               <Route path="settings" element={<Settings />} />

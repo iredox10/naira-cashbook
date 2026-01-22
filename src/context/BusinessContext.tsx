@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { db, Business } from '../db/db';
+import { db, type Business } from '../db/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 interface BusinessContextType {
