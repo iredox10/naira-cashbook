@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { InstallPWA } from './components/InstallPWA';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { History } from './pages/History';
@@ -23,6 +24,7 @@ function App() {
         <PrivacyProvider>
           <BusinessProvider>
             <BrowserRouter>
+              <InstallPWA />
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />

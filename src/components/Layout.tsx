@@ -1,12 +1,9 @@
 import { Outlet } from 'react-router-dom';
 import { BottomNav } from './BottomNav';
 import { DesktopSidebar } from './DesktopSidebar';
-import { InstallPWA } from './InstallPWA';
-
 export function Layout() {
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-jakarta">
-      <InstallPWA />
       {/* Desktop Sidebar - Hidden on mobile */}
       <DesktopSidebar />
 
