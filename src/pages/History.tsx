@@ -6,13 +6,25 @@ import { cn } from '../lib/utils';
 import { AlertCircle, Search, Filter } from 'lucide-react';
 import { formatCurrency } from '../lib/format';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { useBusiness } from '../context/BusinessContext';
 
 export function History() {
+  const navigate = useNavigate();
+  const { currentBusiness } = useBusiness();
   const [search, setSearch] = useState('');
   
   const transactions = useLiveQuery(
-    () => db.transactions.orderBy('date').reverse().toArray(),
-    []
+    async () => {
+      if (!currentBusiness) return [];
+      return await db.transactions
+        .where('businessId')
+        .equals(currentBusiness.id)
+        .reverse()
+        .sortBy('date');
+    },
+    [currentBusiness?.id]
   );
 
   if (!transactions) return null;
@@ -69,7 +81,11 @@ export function History() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {items.map((t) => (
-                    <div key={t.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-emerald-100 transition-all duration-200 group">
+                    <div 
+                      key={t.id} 
+                      onClick={() => navigate(`/add?id=${t.id}`)}
+                      className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-emerald-100 transition-all duration-200 group cursor-pointer active:scale-95"
+                    >
                         <div className="flex justify-between items-start">
                             <div className="space-y-1">
                                 <p className="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">{t.remark || t.category}</p>

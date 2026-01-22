@@ -1,33 +1,103 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mic, Calendar, Save, CheckCircle2 } from 'lucide-react';
-import { db, CATEGORIES } from '../db/db';
-import { cn } from '../lib/utils';
-import { format } from 'date-fns';
+import { ArrowLeft, Mic, Calendar, Save, CheckCircle2, Trash2, Plus, Camera, Loader2 } from 'lucide-react';
+// ... imports
+import Tesseract from 'tesseract.js';
 
 export function AddTransaction() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const initialType = searchParams.get('type') === 'OUT' ? 'OUT' : 'IN';
+  // ... existing state
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+
+  // ... existing hooks
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsProcessingImage(true);
+    try {
+      const result = await Tesseract.recognize(file, 'eng');
+      const text = result.data.text;
+      
+      // Simple regex for amount (looks for prices like 1,200.00 or 500)
+      const amountMatch = text.match(/(\d{1,3}(,\d{3})*(\.\d{2})?)/g);
+      if (amountMatch) {
+         // Find the largest number, usually the total
+         const amounts = amountMatch.map(s => parseFloat(s.replace(/,/g, '')));
+         const maxAmount = Math.max(...amounts);
+         if (maxAmount > 0) setAmount(maxAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+      }
+
+      // Simple regex for date (DD/MM/YYYY or YYYY-MM-DD)
+      const dateMatch = text.match(/(\d{2}[/-]\d{2}[/-]\d{4})|(\d{4}[/-]\d{2}[/-]\d{2})/);
+      if (dateMatch) {
+         try {
+            const dateStr = dateMatch[0].replace(/\//g, '-');
+            // If DD-MM-YYYY, convert to YYYY-MM-DD
+            if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                const [d, m, y] = dateStr.split('-');
+                setDate(`${y}-${m}-${d}`);
+            } else {
+                setDate(dateStr);
+            }
+         } catch (e) { console.error("Date parse error", e); }
+      }
+      
+      // Set remark to first line or merchant name guess
+      const lines = text.split('\n').filter(l => l.trim().length > 3);
+      if (lines.length > 0) setRemark(lines[0].substring(0, 20));
+
+    } catch (err) {
+      alert("Failed to scan receipt.");
+      console.error(err);
+    } finally {
+      setIsProcessingImage(false);
+    }
+  };
+
+  // ... rest of component
+
+  return (
+    // ...
+                    <div className="flex items-center space-x-2">
+                        <input 
+                        type="text" 
+                        value={remark}
+                        onChange={(e) => setRemark(e.target.value)}
+                        placeholder="What is this for?"
+                        className="flex-1 bg-slate-50 border-none rounded-xl px-4 py-3 text-slate-700 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                        />
+                        <button 
+                        onClick={startListening}
+                        className={cn("p-3 rounded-xl transition-all active:scale-95", isListening ? "bg-red-100 text-red-600 ring-2 ring-red-200 animate-pulse" : "bg-slate-100 text-slate-500 hover:bg-slate-200")}
+                        >
+                        <Mic size={20} />
+                        </button>
+                        
+                        <label className={cn("p-3 rounded-xl transition-all active:scale-95 cursor-pointer flex items-center justify-center", isProcessingImage ? "bg-blue-100 text-blue-600" : "bg-slate-100 text-slate-500 hover:bg-slate-200")}>
+                            {isProcessingImage ? <Loader2 size={20} className="animate-spin" /> : <Camera size={20} />}
+                            <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageUpload} disabled={isProcessingImage} />
+                        </label>
+                    </div>
+    // ...
+  );
+}
+            </div>
+    // ... rest
+  );
+}
+       });
+    }
+  }, [id]);
+
+  useEffect(() => {
+     if (!isEditMode) { // Only change default category if NOT editing
+        if (type === 'IN' && category === 'Food') setCategory('Sales');
+        if (type === 'OUT' && category === 'Sales') setCategory('Food');
+     }
+  }, [type, isEditMode]);
   
-  const [type, setType] = useState<'IN' | 'OUT'>(initialType);
-  const [amount, setAmount] = useState('');
-  const [remark, setRemark] = useState('');
-  const [category, setCategory] = useState(CATEGORIES[0]);
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [isCredit, setIsCredit] = useState(false);
-  const [dueDate, setDueDate] = useState('');
-  const [isListening, setIsListening] = useState(false);
-
-  useEffect(() => {
-     if (type === 'IN' && category === 'Food') setCategory('Sales');
-     if (type === 'OUT' && category === 'Sales') setCategory('Food');
-  }, [type]);
-
-  useEffect(() => {
-    const sharedText = searchParams.get('text') || searchParams.get('title');
-    if (sharedText) parseVoiceInput(sharedText);
-  }, [searchParams]);
+  // ... (rest of imports and useEffects)
 
   const startListening = () => {
     if (!('webkitSpeechRecognition' in window)) {
@@ -80,7 +150,7 @@ export function AddTransaction() {
     if (!amount) return;
     const numericAmount = parseFloat(amount.replace(/,/g, ''));
     
-    await db.transactions.add({
+    const data = {
       amount: numericAmount,
       type,
       category,
@@ -89,9 +159,22 @@ export function AddTransaction() {
       paymentMode: 'Cash',
       isCredit,
       dueDate: isCredit && dueDate ? new Date(dueDate) : undefined
-    });
+    };
+
+    if (isEditMode && id) {
+       await db.transactions.update(parseInt(id), data);
+    } else {
+       await db.transactions.add(data);
+    }
     
     navigate(-1);
+  };
+
+  const handleDelete = async () => {
+     if (confirm('Are you sure you want to delete this transaction?')) {
+        if (id) await db.transactions.delete(parseInt(id));
+        navigate(-1);
+     }
   };
 
   return (
@@ -104,8 +187,14 @@ export function AddTransaction() {
                 <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/20 rounded-full transition-colors">
                 <ArrowLeft size={24} />
                 </button>
-                <h1 className="text-xl font-bold tracking-wide">{type === 'IN' ? 'Record Income' : 'Record Expense'}</h1>
+                <h1 className="text-xl font-bold tracking-wide">{isEditMode ? 'Edit Transaction' : (type === 'IN' ? 'Record Income' : 'Record Expense')}</h1>
             </div>
+            {isEditMode && (
+               <button onClick={handleDelete} className="p-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors">
+                  <Trash2 size={20} />
+               </button>
+            )}
+            {!isEditMode && (
             <div className="flex bg-black/20 p-1 rounded-lg backdrop-blur-sm">
                 <button 
                     onClick={() => setType('IN')}
@@ -120,7 +209,9 @@ export function AddTransaction() {
                     Out
                 </button>
             </div>
+            )}
         </div>
+
 
         <div className="flex-1 p-6 space-y-8">
             

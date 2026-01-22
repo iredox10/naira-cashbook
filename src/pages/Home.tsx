@@ -7,13 +7,21 @@ import { db } from '../db/db';
 import { CashflowPredictor } from '../components/CashflowPredictor';
 import { formatCurrency } from '../lib/format';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useBusiness } from '../context/BusinessContext';
 
 export function Home() {
   const { isPrivacyMode, togglePrivacyMode } = usePrivacy();
+  const { currentBusiness } = useBusiness();
   const navigate = useNavigate();
 
   const data = useLiveQuery(async () => {
-    const transactions = await db.transactions.toArray();
+    if (!currentBusiness) return { totalIn: 0, totalOut: 0, balance: 0, chartData: [] };
+
+    const transactions = await db.transactions
+      .where('businessId')
+      .equals(currentBusiness.id)
+      .toArray();
+      
     let totalIn = 0;
     let totalOut = 0;
     
@@ -29,7 +37,7 @@ export function Home() {
     });
 
     return { totalIn, totalOut, balance: totalIn - totalOut, chartData };
-  }, [], { totalIn: 0, totalOut: 0, balance: 0, chartData: [] });
+  }, [currentBusiness?.id], { totalIn: 0, totalOut: 0, balance: 0, chartData: [] });
 
   return (
     <div className="p-4 md:p-0 space-y-8 animate-in fade-in duration-500">
@@ -38,7 +46,9 @@ export function Home() {
       <header className="flex justify-between items-center mb-6">
         <div>
            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Dashboard</h1>
-           <p className="text-sm md:text-base text-slate-500 font-medium">Overview of your cash flow</p>
+           <p className="text-sm md:text-base text-slate-500 font-medium">
+             {currentBusiness?.name || 'Overview of your cash flow'}
+           </p>
         </div>
         <div className="flex items-center space-x-3">
             <button 

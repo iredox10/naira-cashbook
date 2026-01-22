@@ -6,21 +6,24 @@ import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
 import { AddTransaction } from './pages/AddTransaction';
 import { PrivacyProvider } from './context/PrivacyContext';
+import { BusinessProvider } from './context/BusinessContext';
 
 function App() {
   return (
     <PrivacyProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="history" element={<History />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="/add" element={<AddTransaction />} />
-        </Routes>
-      </BrowserRouter>
+      <BusinessProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="history" element={<History />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+            <Route path="/add" element={<AddTransaction />} />
+          </Routes>
+        </BrowserRouter>
+      </BusinessProvider>
     </PrivacyProvider>
   );
 }

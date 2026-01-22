@@ -3,14 +3,21 @@ import { db } from '../db/db';
 import { addDays, isAfter, isBefore } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { formatCurrency } from '../lib/format';
+import { useBusiness } from '../context/BusinessContext';
 
 export function CashflowPredictor() {
+  const { currentBusiness } = useBusiness();
+  
   const prediction = useLiveQuery(async () => {
+    if (!currentBusiness) return { totalDue: 0, count: 0 };
+    
     const today = new Date();
     const nextWeek = addDays(today, 7);
     
     // Find all 'Credit' transactions that are due in the next 7 days
     const upcomingDues = await db.transactions
+      .where('businessId')
+      .equals(currentBusiness.id)
       .filter(t => 
         t.isCredit === true && 
         !!t.dueDate && 
@@ -22,7 +29,7 @@ export function CashflowPredictor() {
     const totalDue = upcomingDues.reduce((sum, t) => sum + t.amount, 0);
     
     return { totalDue, count: upcomingDues.length };
-  }, []);
+  }, [currentBusiness?.id]);
 
   if (!prediction || prediction.count === 0) return null;
 
