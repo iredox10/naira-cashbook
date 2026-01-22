@@ -1,4 +1,4 @@
-import { User, Shield, HelpCircle, Database, Download, Upload, Trash, LogOut, Cloud, RefreshCw } from 'lucide-react';
+import { User, Shield, HelpCircle, Database, Download, Upload, Trash, LogOut, Cloud, RefreshCw, Briefcase, Plus } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { db } from '../db/db';
 import { useBusiness } from '../context/BusinessContext';
@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSync } from '../context/SyncContext';
 
 export function Settings() {
-    const { currentBusiness, userRole, switchRole } = useBusiness();
+    const { currentBusiness, businesses, switchBusiness, createBusiness, userRole, switchRole } = useBusiness();
     const { user, logout } = useAuth();
     const { sync, isSyncing, lastSynced } = useSync();
 
@@ -134,6 +134,31 @@ export function Settings() {
                             <p className="text-xs text-slate-400">Sign out of your account</p>
                         </div>
                     </button>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden space-y-4 p-6">
+                <h3 className="font-bold text-slate-900 flex items-center justify-between">
+                    <span className="flex items-center"><Briefcase size={18} className="mr-2" /> My Businesses</span>
+                    <button onClick={async () => {
+                        const name = prompt("Enter new business name:");
+                        if (name) await createBusiness(name);
+                    }} className="text-emerald-600 text-sm font-bold flex items-center bg-emerald-50 px-3 py-1.5 rounded-lg active:scale-95 transition-transform"><Plus size={14} className="mr-1" /> New</button>
+                </h3>
+
+                <div className="space-y-2">
+                    {businesses?.map(b => (
+                        <button
+                            key={b.id}
+                            onClick={() => switchBusiness(b.id!)}
+                            className={cn(
+                                "w-full flex items-center justify-between p-3 rounded-xl transition-all border",
+                                currentBusiness?.id === b.id ? "bg-emerald-600 text-white border-emerald-600 shadow-md transform scale-[1.02]" : "bg-white text-slate-600 border-slate-100 hover:bg-slate-50"
+                            )}>
+                            <span className="font-bold">{b.name}</span>
+                            {currentBusiness?.id === b.id && <span className="bg-white/20 text-xs px-2 py-1 rounded-full text-white">Active</span>}
+                        </button>
+                    ))}
                 </div>
             </div>
 
