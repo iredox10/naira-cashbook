@@ -1,7 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
-import { addDays, isAfter, isBefore, format } from 'date-fns';
-import { TrendingUp, AlertTriangle } from 'lucide-react';
+import { addDays, isAfter, isBefore } from 'date-fns';
+import { AlertTriangle } from 'lucide-react';
+import { formatCurrency } from '../lib/format';
 
 export function CashflowPredictor() {
   const prediction = useLiveQuery(async () => {
@@ -26,17 +27,17 @@ export function CashflowPredictor() {
   if (!prediction || prediction.count === 0) return null;
 
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
-      <div className="flex items-start space-x-3">
-        <div className="p-2 bg-amber-100 rounded-full text-amber-600">
-           <AlertTriangle size={20} />
+    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start space-x-4">
+        <div className="p-3 bg-amber-100 rounded-xl text-amber-600 shrink-0">
+           <AlertTriangle size={24} />
         </div>
         <div>
-          <h4 className="font-bold text-amber-800">Upcoming Payments</h4>
-          <p className="text-sm text-amber-700 mt-1">
-            You have <span className="font-bold">{prediction.count} payments</span> totaling <span className="font-bold">₹{prediction.totalDue.toLocaleString()}</span> due in the next 7 days.
+          <h4 className="font-bold text-amber-900 text-lg">Upcoming Payments</h4>
+          <p className="text-sm text-amber-800 mt-1 leading-relaxed">
+            You have <span className="font-bold bg-amber-100 px-1 rounded">{prediction.count} payments</span> totaling <span className="font-bold text-amber-900">{formatCurrency(prediction.totalDue)}</span> due in the next 7 days.
           </p>
-          <button className="mt-3 text-xs font-bold text-amber-800 uppercase tracking-wide bg-amber-100 px-3 py-1 rounded-full">
+          <button className="mt-3 text-xs font-bold text-amber-900 uppercase tracking-wide bg-amber-200/50 hover:bg-amber-200 px-4 py-2 rounded-lg transition-colors">
             View Details
           </button>
         </div>
