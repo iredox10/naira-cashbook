@@ -54,6 +54,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
                 for (const record of localRecords) {
                     const data = { ...record, userId: user.$id };
                     delete data.id; // Dexie internal ID
+                    delete data.remoteId; // Do not send remoteId back to Appwrite, it generates its own $id
 
                     // --- Handle Image Upload for Transactions ---
                     if (table.name === 'transactions' && record.receiptImage instanceof Blob) {
