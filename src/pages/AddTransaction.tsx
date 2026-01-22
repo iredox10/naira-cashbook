@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mic, Calendar, Save, CheckCircle2, Trash2, Plus, Camera, Loader2, User, Package } from 'lucide-react';
-import { db, type Item, type Party } from '../db/db';
+import { db, type Item, type Party, type Staff } from '../db/db';
 import { cn } from '../lib/utils';
 import { format } from 'date-fns';
 import { useLiveQuery } from 'dexie-react-hooks';

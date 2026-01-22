@@ -1,4 +1,4 @@
-import { Home, History, FileBarChart, Settings, LayoutDashboard, ChevronDown, Plus, Users, Package } from 'lucide-react';
+import { Home, History, FileBarChart, Settings, LayoutDashboard, ChevronDown, Plus, Users, Package, Briefcase } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { useBusiness } from '../context/BusinessContext';
@@ -12,6 +12,7 @@ export function DesktopSidebar() {
     { icon: Home, label: 'Dashboard', to: '/' },
     { icon: Users, label: 'Parties', to: '/parties' },
     { icon: Package, label: 'Inventory', to: '/inventory' },
+    { icon: Briefcase, label: 'Staff', to: '/staff' },
     { icon: History, label: 'Transactions', to: '/history' },
     { icon: FileBarChart, label: 'Reports', to: '/reports' },
     { icon: Settings, label: 'Settings', to: '/settings' },

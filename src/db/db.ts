@@ -30,6 +30,14 @@ export interface Party {
   type: 'CUSTOMER' | 'SUPPLIER';
 }
 
+export interface Staff {
+  id: number;
+  businessId: number;
+  name: string;
+  role: 'ADMIN' | 'STAFF'; // For display purposes in local mode
+  phone?: string;
+}
+
 export interface Transaction {
   id: number;
   businessId: number;
@@ -48,11 +56,10 @@ export interface Transaction {
   // Feature: Party Ledger
   partyId?: number;
   
-  // Feature: Inventory Link (Simple: one item per transaction for now, or multiple via JSON in remark if needed, but let's do direct link)
-  // For a full POS system, we'd need a separate TransactionItems table, but for "CashBook",
-  // usually it's "Sold 5 items". Let's stick to simple single-line item or just tracking value.
-  // Actually, to support inventory deduction, we need to know what was sold.
-  // Let's add an optional items array
+  // Feature: Staff Tagging
+  staffId?: number;
+  
+  // Feature: Inventory Link
   items?: { itemId: number; qty: number; price: number }[]; 
 }
 
@@ -62,15 +69,17 @@ export const db = new Dexie('CashBookDB') as Dexie & {
   businesses: EntityTable<Business, 'id'>;
   items: EntityTable<Item, 'id'>;
   parties: EntityTable<Party, 'id'>;
+  staff: EntityTable<Staff, 'id'>;
 };
 
 // Schema
-db.version(4).stores({
-  transactions: '++id, businessId, date, type, category, dueDate, isCredit, partyId',
+db.version(5).stores({
+  transactions: '++id, businessId, date, type, category, dueDate, isCredit, partyId, staffId',
   categories: '++id, name, type',
   businesses: '++id, name',
-  items: '++id, businessId, name, stock', // Indexed by stock for low stock queries
-  parties: '++id, businessId, name, type'
+  items: '++id, businessId, name, stock',
+  parties: '++id, businessId, name, type',
+  staff: '++id, businessId, name'
 });
 
 export const DEFAULT_CATEGORIES = [

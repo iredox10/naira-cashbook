@@ -7,6 +7,7 @@ import { Settings } from './pages/Settings';
 import { AddTransaction } from './pages/AddTransaction';
 import { Inventory } from './pages/Inventory';
 import { Parties } from './pages/Parties';
+import { Staff } from './pages/Staff';
 import { PrivacyProvider } from './context/PrivacyContext';
 import { BusinessProvider } from './context/BusinessContext';
 
@@ -20,6 +21,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path="inventory" element={<Inventory />} />
               <Route path="parties" element={<Parties />} />
+              <Route path="staff" element={<Staff />} />
               <Route path="history" element={<History />} />
               <Route path="reports" element={<Reports />} />
               <Route path="settings" element={<Settings />} />
