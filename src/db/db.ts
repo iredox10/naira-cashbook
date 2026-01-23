@@ -14,6 +14,10 @@ export interface Business {
   currency: string;
   logo?: string;
   remoteId?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  tagline?: string;
 }
 
 export interface Transaction {

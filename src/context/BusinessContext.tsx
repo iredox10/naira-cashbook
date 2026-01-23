@@ -6,6 +6,7 @@ interface BusinessContextType {
   currentBusiness: Business | undefined;
   switchBusiness: (id: number) => void;
   createBusiness: (name: string) => Promise<void>;
+  updateBusiness: (id: number, data: Partial<Business>) => Promise<void>;
   businesses: Business[] | undefined;
   userRole: 'Admin' | 'Operator';
   switchRole: (role: 'Admin' | 'Operator') => void;
@@ -64,8 +65,12 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     }
   }, [businesses, currentBusiness]);
 
+  const updateBusiness = async (id: number, data: Partial<Business>) => {
+    await db.businesses.update(id, data);
+  };
+
   return (
-    <BusinessContext.Provider value={{ currentBusiness, switchBusiness, createBusiness, businesses, userRole, switchRole }}>
+    <BusinessContext.Provider value={{ currentBusiness, switchBusiness, createBusiness, updateBusiness, businesses, userRole, switchRole }}>
       {children}
     </BusinessContext.Provider>
   );

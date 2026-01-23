@@ -1,4 +1,4 @@
-import { User, Shield, HelpCircle, Database, Download, Upload, Trash, LogOut, Cloud, RefreshCw, Briefcase, Plus, UserPlus } from 'lucide-react';
+import { User, Shield, HelpCircle, Database, Download, Upload, Trash, LogOut, Cloud, RefreshCw, Briefcase, Plus, UserPlus, CreditCard } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { db } from '../db/db';
 import { useBusiness } from '../context/BusinessContext';
@@ -161,6 +161,11 @@ export function Settings() {
                             {currentBusiness?.id === b.id && (
                                 <a href="/add-member" className="absolute right-14 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors" title="Add Members">
                                     <UserPlus size={16} />
+                                </a>
+                            )}
+                            {currentBusiness?.id === b.id && (
+                                <a href="/business-card" className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors" title="Business Card">
+                                    <CreditCard size={16} />
                                 </a>
                             )}
                         </div>

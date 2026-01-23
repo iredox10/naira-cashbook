@@ -12,6 +12,7 @@ import { Staff } from './pages/Staff';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { AddMember } from './pages/AddMember';
+import { BusinessCard } from './pages/BusinessCard';
 import { PrivacyProvider } from './context/PrivacyContext';
 import { BusinessProvider } from './context/BusinessContext';
 import { AuthProvider } from './context/AuthContext';
@@ -42,6 +43,7 @@ function App() {
                   </Route>
                   <Route path="/add" element={<AddTransaction />} />
                   <Route path="/add-member" element={<AddMember />} />
+                  <Route path="/business-card" element={<BusinessCard />} />
                 </Route>
               </Routes>
             </BrowserRouter>
