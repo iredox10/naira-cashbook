@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Plus, Minus, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { Eye, EyeOff, Plus, Minus, TrendingUp, TrendingDown, Wallet, Users } from 'lucide-react';
 import { usePrivacy } from '../context/PrivacyContext';
 import { PrivacyBlur } from '../components/PrivacyBlur';
 import { useNavigate } from 'react-router-dom';
@@ -172,6 +172,19 @@ export function Home() {
               <span>Cash Out</span>
             </div>
             <span className="opacity-40 text-sm">Expense</span>
+          </button>
+
+          <button
+            onClick={() => navigate('/add-member')}
+            className="w-full flex items-center justify-between px-6 py-4 bg-blue-50 border border-blue-100 hover:bg-blue-100 text-blue-700 rounded-2xl font-bold shadow-sm active:scale-95 transition-all cursor-pointer group"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/50 rounded-lg group-hover:bg-white transition-colors">
+                <Users size={20} />
+              </div>
+              <span>Invite Member</span>
+            </div>
+            <span className="opacity-60 text-sm">Team</span>
           </button>
 
           {/* Widget */}
