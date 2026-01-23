@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { format, isPast, isSameDay } from 'date-fns';
 import { PrivacyBlur } from '../components/PrivacyBlur';
+import { ReceiptShareButton } from '../components/ReceiptShareButton';
 import { cn } from '../lib/utils';
 import { AlertCircle, Search, Filter } from 'lucide-react';
 import { formatCurrency } from '../lib/format';
@@ -110,6 +111,10 @@ export function History() {
                       <PrivacyBlur className={cn("text-lg font-bold tabular-nums", t.type === 'IN' ? "text-emerald-600" : "text-red-500")}>
                         {t.type === 'IN' ? '+' : '-'} {formatCurrency(t.amount)}
                       </PrivacyBlur>
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-slate-50 flex justify-end" onClick={(e) => e.stopPropagation()}>
+                      <ReceiptShareButton transaction={t} variant="button" />
                     </div>
                   </div>
                 ))}

@@ -7,6 +7,7 @@ import { formatCurrency } from '../lib/format';
 import { cn } from '../lib/utils';
 import { format } from 'date-fns';
 import { QRCodeSVG } from 'qrcode.react';
+import { ReceiptShareButton } from '../components/ReceiptShareButton';
 
 export function Parties() {
     const { currentBusiness } = useBusiness();
@@ -215,13 +216,16 @@ function PartyLedger({ party, onBack }: { party: Party; onBack: () => void }) {
                             <p className="font-medium text-slate-900">{t.remark || 'Transaction'}</p>
                             <p className="text-xs text-slate-400">{format(t.date, 'dd MMM yyyy')}</p>
                         </div>
-                        <div className={cn("font-bold", t.type === 'IN' ? "text-emerald-600" : "text-red-600")}>
-                            {t.type === 'IN' ? '+' : '-'} {formatCurrency(t.amount)}
+                        <div className="text-right">
+                            <div className={cn("font-bold mb-1", t.type === 'IN' ? "text-emerald-600" : "text-red-600")}>
+                                {t.type === 'IN' ? '+' : '-'} {formatCurrency(t.amount)}
+                            </div>
+                            <ReceiptShareButton transaction={t} partyName={party.name} variant="icon" />
                         </div>
                     </div>
                 ))}
             </div>
-        </div>
+        </div >
     );
 }
 
